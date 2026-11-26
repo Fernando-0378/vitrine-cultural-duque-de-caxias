@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Difusão Cultural — Praça Duque de Caxias / Titanic (Vila Velha - ES)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: #1c2833;
+      display: flex;
+      flex-direction: column;
+      background-color: #1f4e5f;
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      transition: background-image 0.35s ease-in-out;
+    }
+    header {
+      width: 100%;
+      background: rgba(18, 52, 66, 0.85);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      padding: 16px 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 {
+      margin: 0 0 4px 0;
+      font-size: 24px;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    }
+    header p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+    .acoes-topo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-acesso {
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.14);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .btn-acesso {
+      width: auto;
+      margin: 0;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      cursor: pointer;
+    }
+    .btn-acesso:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .container {
+      width: 100%;
+      flex: 1;
+      padding: 24px 32px 32px 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.85fr) minmax(300px, 0.95fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .coluna-esquerda {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      width: 100%;
+    }
+    .topo-esquerda {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .topo-esquerda.somente-leitura {
+      grid-template-columns: 1fr;
+    }
+    form, .filtros, .card, .painel-fotos, .aviso-visitante {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(5px);
+      padding: 18px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    form {
+      display: none;
+    }
+    body.modo-admin form {
+      display: block;
+    }
+    .aviso-visitante {
+      display: block;
+    }
+    body.modo-admin .aviso-visitante {
+      display: none;
+    }
+    .aviso-visitante h2 {
+      margin: 0 0 8px 0;
+      font-size: 17px;
+      color: #163946;
+    }
+    .aviso-visitante p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: #2c434d;
+    }
+    form h2, .painel-fotos h2 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      color: #163946;
+    }
+    .grid-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    label {
+      font-size: 13px;
+      font-weight: bold;
+      display: block;
+      color: #163946;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 4px;
+      border: 1px solid rgba(31, 78, 95, 0.35);
+      border-radius: 6px;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.96);
+    }
+    button[type="submit"] {
+      background: #1f4e5f;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 8px;
+      padding: 10px;
+      font-size: 14px;
+    }
+    button[type="submit"]:hover {
+      background: #163946;
+    }
+    .filtros {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #lista-cultural {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+    .card-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-excluir {
+      display: none;
+      width: auto;
+      margin: 0;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      background: #922b21;
+      color: #fff;
+      cursor: pointer;
+    }
+    body.modo-admin .btn-excluir {
+      display: inline-block;
+    }
+    .btn-excluir:hover {
+      background: #78281f;
+    }
+    .card h3 {
+      margin: 8px 0 6px 0;
+      font-size: 16px;
+      color: #122b36;
+    }
+    .card p {
+      margin: 4px 0;
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+    .badge {
+      display: inline-block;
+      background: #1f4e5f;
+      color: #fff;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .coluna-direita {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+    .subtitulo-fotos {
+      margin: 0 0 12px 0;
+      font-size: 12.5px;
+      color: #324b56;
+      line-height: 1.35;
+    }
+    .grade-4-fotos {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .foto-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 3px solid transparent;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+      cursor: pointer;
+      background: #163946;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .foto-card:hover,
+    .foto-card.ativa {
+      transform: translateY(-2px);
+      border-color: #1f4e5f;
+    }
+    .foto-card img {
+      width: 100%;
+      height: 145px;
+      object-fit: cover;
+      display: block;
+    }
+    .foto-legenda {
+      padding: 8px 10px;
+      background: rgba(18, 52, 66, 0.92);
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    @media (max-width: 1050px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+      .topo-esquerda {
+        grid-template-columns: 1fr;
+      }
+      .grade-4-fotos {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 650px) {
+      .grid-form,
+      .grade-4-fotos {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Vitrine Cultural — Praça Duque de Caxias / Titanic</h1>
+      <p>Organização e divulgação de artistas, artesãos e eventos — Centro, Vila Velha, ES</p>
+    </div>
+    <div class="acoes-topo">
+      <span class="status-acesso" id="status-acesso">Modo visitante (somente leitura)</span>
+      <button type="button" class="btn-acesso" id="btn-toggle-admin">Modo Organizador</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="coluna-esquerda" aria-label="Blocos culturais e cadastro">
+      <div class="topo-esquerda somente-leitura" id="topo-esquerda">
+        <div class="aviso-visitante">
+          <h2>Vitrine pública de difusão cultural</h2>
+          <p>
+            Apenas a coordenação do projeto pode adicionar ou remover registros de artistas, artesãos e eventos.
+            Use os filtros de categoria ou busca para consultar a programação.
+          </p>
+        </div>
+
+        <form id="form-cultura">
+          <h2>Cadastrar trabalho ou evento cultural</h2>
+          <div class="grid-form">
+            <div>
+              <label for="artista">Artista / Artesão / Coletivo</label>
+              <input type="text" id="artista" required placeholder="Ex.: Coletivo Cultural Duque de Caxias" />
+            </div>
+            <div>
+              <label for="titulo">Título da obra ou atividade</label>
+              <input type="text" id="titulo" required placeholder="Ex.: Cerâmica utilitária e decorativa" />
+            </div>
+            <div>
+              <label for="categoria">Categoria</label>
+              <select id="categoria">
+                <option value="Artesanato">Artesanato</option>
+                <option value="Música">Música</option>
+                <option value="Artes Visuais">Artes Visuais</option>
+                <option value="Evento Cultural">Evento Cultural</option>
+              </select>
+            </div>
+            <div>
+              <label for="contato">Contato / Rede social</label>
+              <input type="text" id="contato" required placeholder="Ex.: @culturaduquedecaxias" />
+            </div>
+          </div>
+          <div>
+            <label for="descricao">Descrição breve para divulgação</label>
+            <textarea id="descricao" rows="3" required placeholder="Descreva o trabalho, técnica ou programação cultural..."></textarea>
+          </div>
+          <button type="submit">Salvar na vitrine</button>
+        </form>
+
+        <div class="filtros">
+          <div>
+            <label for="filtro-categoria">Filtrar por categoria</label>
+            <select id="filtro-categoria">
+              <option value="Todas">Todas</option>
+              <option value="Artesanato">Artesanato</option>
+              <option value="Música">Música</option>
+              <option value="Artes Visuais">Artes Visuais</option>
+              <option value="Evento Cultural">Evento Cultural</option>
+            </select>
+          </div>
+          <div>
+            <label for="busca">Buscar por nome, obra ou descrição</label>
+            <input type="text" id="busca" placeholder="Digite para filtrar..." />
+          </div>
+        </div>
+      </div>
+
+      <section id="lista-cultural" aria-label="Módulos cadastrados"></section>
+    </section>
+
+    <aside class="coluna-direita" aria-label="Fotos recentes da Praça Duque de Caxias">
+      <div class="painel-fotos">
+        <h2>Registros da Praça Duque de Caxias / Titanic</h2>
+        <p class="subtitulo-fotos">
+          Clique em qualquer foto para alternar o fundo da página.
+        </p>
+
+        <div class="grade-4-fotos" id="grade-4-fotos">
+          <div class="foto-card ativa" data-slot="0">
+            <img src="foto1.jpg" alt="Parque Urbano Duque de Caxias - Vista Geral" />
+            <div class="foto-legenda">
+              <span>Parque Urbano Duque de Caxias</span>
+            </div>
+          </div>
+
+          <div class="foto-card" data-slot="1">
+            <img src="foto2.jpg" alt="Deque e Área de Convivência - Vila Velha" />
+            <div class="foto-legenda">
+              <span>Deque e Área de Convivência</span>
+            </div>
+          </div>
+
+          <div class="foto-card" data-slot="2">
+            <img src="foto3.jpg" alt="Entorno Cultural e Auditório do Titanic" />
+            <div class="foto-legenda">
+              <span>Auditório do Titanic e Entorno</span>
+            </div>
+          </div>
+
+          <div class="foto-card" data-slot="3">
+            <img src="foto4.jpg" alt="Eventos Culturais no Centro de Vila Velha" />
+            <div class="foto-legenda">
+              <span>Eventos Culturais — Vila Velha (2026)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const CHAVE_STORAGE = "vitrine_cultural_duque_de_caxias_titanic_v1";
+    const CHAVE_FOTOS_SLOTS = "vitrine_fotos_2026_slots_v1";
+    const CHAVE_SESSAO_ADMIN = "vitrine_admin_ativo_v1";
+
+    // Troque "2026" abaixo pela senha ou PIN que você preferir
+    const SENHA_ORGANIZADOR = "1978";
+
+    let isAdmin = sessionStorage.getItem(CHAVE_SESSAO_ADMIN) === "true";
+
+    const btnToggleAdmin = document.getElementById("btn-toggle-admin");
+    const statusAcesso = document.getElementById("status-acesso");
+    const topoEsquerda = document.getElementById("topo-esquerda");
+
+    function atualizarEstadoAdmin() {
+      if (isAdmin) {
+        document.body.classList.add("modo-admin");
+        topoEsquerda.classList.remove("somente-leitura");
+        statusAcesso.textContent = "Modo organizador ativo (edição liberada)";
+        btnToggleAdmin.textContent = "Bloquear edição";
+      } else {
+        document.body.classList.remove("modo-admin");
+        topoEsquerda.classList.add("somente-leitura");
+        statusAcesso.textContent = "Modo visitante (somente leitura)";
+        btnToggleAdmin.textContent = "Modo Organizador";
+      }
+      sessionStorage.setItem(CHAVE_SESSAO_ADMIN, isAdmin ? "true" : "false");
+    }
+
+    btnToggleAdmin.addEventListener("click", () => {
+      if (isAdmin) {
+        isAdmin = false;
+        atualizarEstadoAdmin();
+        return;
+      }
+
+      const senhaDigitada = prompt("Digite a senha de organizador para cadastrar ou excluir eventos:");
+      if (senhaDigitada === null) return;
+
+      if (senhaDigitada === SENHA_ORGANIZADOR) {
+        isAdmin = true;
+        atualizarEstadoAdmin();
+      } else {
+        alert("Senha incorreta. Apenas o organizador pode alterar os registros.");
+      }
+    });
+
+    atualizarEstadoAdmin();
+
+    function gerarImagemDistinta(indice) {
+      const cenarios = [
+        { c1: "#1b4f72", c2: "#2e86c1", c3: "#27ae60", titulo: "Parque Urbano Duque de Caxias", sub: "Vista Geral — Centro, Vila Velha (2026)" },
+        { c1: "#145a32", c2: "#1e8449", c3: "#d4ac0d", titulo: "Deque e Área de Convivência", sub: "Espaço Arborizado — Vila Velha (2026)" },
+        { c1: "#4a235a", c2: "#7d3c98", c3: "#2e86c1", titulo: "Auditório do Titanic e Entorno", sub: "Polo Cultural — Praça Duque de Caxias (2026)" },
+        { c1: "#78281f", c2: "#b03a2e", c3: "#1f618d", titulo: "Programação Cultural 2026", sub: "Feiras, Artesanato e Música — Vila Velha, ES" }
+      ];
+      const item = cenarios[indice];
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500">
+          <defs>
+            <linearGradient id="g${indice}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="${item.c1}"/>
+              <stop offset="60%" stop-color="${item.c2}"/>
+              <stop offset="100%" stop-color="${item.c3}"/>
+            </linearGradient>
+          </defs>
+          <rect width="900" height="500" fill="url(#g${indice})"/>
+          <circle cx="${180 + indice * 160}" cy="130" r="70" fill="rgba(255,255,255,0.14)"/>
+          <path d="M0 370 Q 250 ${300 - indice * 25}, 500 360 T 900 330 L 900 500 L 0 500 Z" fill="rgba(10,25,35,0.38)"/>
+          <text x="50%" y="46%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="bold">${item.titulo}</text>
+          <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Arial, sans-serif" font-size="20">${item.sub}</text>
+        </svg>
+      `;
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    function definirFundoPagina(urlImagem) {
+      const gradiente = "linear-gradient(rgba(12, 34, 44, 0.25), rgba(12, 34, 44, 0.35))";
+      const valorFundo = `${gradiente}, url("${urlImagem}")`;
+      document.documentElement.style.backgroundImage = valorFundo;
+      document.body.style.backgroundImage = valorFundo;
+    }
+
+    const fotosSalvas = JSON.parse(localStorage.getItem(CHAVE_FOTOS_SLOTS) || "{}");
+    const cardsFotos = document.querySelectorAll(".foto-card");
+
+    cardsFotos.forEach((cardFoto, index) => {
+      const img = cardFoto.querySelector("img");
+
+      if (fotosSalvas[index]) {
+        img.src = fotosSalvas[index];
+      } else {
+        img.onerror = function () {
+          this.onerror = null;
+          this.src = gerarImagemDistinta(index);
+          if (index === 0) {
+            definirFundoPagina(this.src);
+          }
+        };
+      }
+
+      cardFoto.addEventListener("click", () => {
+        const urlEscolhida = img.currentSrc || img.src;
+        definirFundoPagina(urlEscolhida);
+        cardsFotos.forEach((item) => item.classList.remove("ativa"));
+        cardFoto.classList.add("ativa");
+      });
+    });
+
+    window.addEventListener("load", () => {
+      const primeiraImg = document.querySelector(".foto-card.ativa img");
+      if (primeiraImg && (primeiraImg.currentSrc || primeiraImg.src)) {
+        definirFundoPagina(primeiraImg.currentSrc || primeiraImg.src);
+      }
+    });
+
+    const itensIniciais = [
+      {
+        id: 1,
+        artista: "Artesão convidado",
+        titulo: "Cerâmica utilizavel",
+        categoria: "Artesanato",
+        contato: "artesão convidado",
+        descricao: "Será ensinado ao público presente a arte da Cerâmica, duração de três horas de evento cultural, e com certificação ao final."
+      },
+      {
+        id: 2,
+        artista: "Marina Alves Rocha",
+        titulo: "Peças em fibras e bordado local",
+        categoria: "Artesanato",
+        contato: "@marinaartes.vv",
+        descricao: "Peças artesanais expostas nas atividades culturais da Praça Duque de Caxias e região do Titanic, em Vila Velha."
+      },
+      {
+        id: 3,
+        artista: "Roda de Choro Duque de Caxias",
+        titulo: "Apresentação musical na Praça Duque de Caxias / Titanic",
+        categoria: "Música",
+        contato: "@choroduquedecaxias",
+        descricao: "Encontro musical aberto ao público com repertório de música popular brasileira no Centro de Vila Velha."
+      }
+    ];
+
+    function carregarItens() {
+      const salvo = localStorage.getItem(CHAVE_STORAGE);
+      if (!salvo) {
+        localStorage.setItem(CHAVE_STORAGE, JSON.stringify(itensIniciais));
+        return [...itensIniciais];
+      }
+      return JSON.parse(salvo);
+    }
+
+    function salvarItens(itens) {
+      localStorage.setItem(CHAVE_STORAGE, JSON.stringify(itens));
+    }
+
+    let cadastros = carregarItens();
+
+    const form = document.getElementById("form-cultura");
+    const filtroCategoria = document.getElementById("filtro-categoria");
+    const campoBusca = document.getElementById("busca");
+    const lista = document.getElementById("lista-cultural");
+
+    function excluirItem(idItem) {
+      if (!isAdmin) return;
+      cadastros = cadastros.filter((item) => item.id !== idItem);
+      salvarItens(cadastros);
+      renderizarItens();
+    }
+
+    window.excluirItem = excluirItem;
+
+    function renderizarItens() {
+      const catSelecionada = filtroCategoria.value;
+      const termo = campoBusca.value.trim().toLowerCase();
+
+      const filtrados = cadastros.filter((item) => {
+        const atendeCategoria = catSelecionada === "Todas" || item.categoria === catSelecionada;
+        const atendeBusca =
+          item.artista.toLowerCase().includes(termo) ||
+          item.titulo.toLowerCase().includes(termo) ||
+          item.descricao.toLowerCase().includes(termo);
+        return atendeCategoria && atendeBusca;
+      });
+
+      if (filtrados.length === 0) {
+        lista.innerHTML = '<div class="card"><p>Nenhum registro encontrado para o filtro selecionado.</p></div>';
+        return;
+      }
+
+      lista.innerHTML = filtrados
+        .map(
+          (item) => `
+          <article class="card">
+            <div class="card-topo">
+              <span class="badge">${item.categoria}</span>
+              <button type="button" class="btn-excluir" onclick="excluirItem(${item.id})">Excluir</button>
+            </div>
+            <h3>${item.titulo}</h3>
+            <p><strong>Responsável:</strong> ${item.artista}</p>
+            <p><strong>Contato:</strong> ${item.contato}</p>
+            <p>${item.descricao}</p>
+          </article>
+        `
+        )
+        .join("");
+    }
+
+    form.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      if (!isAdmin) return;
+
+      const novoItem = {
+        id: Date.now(),
+        artista: document.getElementById("artista").value.trim(),
+        titulo: document.getElementById("titulo").value.trim(),
+        categoria: document.getElementById("categoria").value,
+        contato: document.getElementById("contato").value.trim(),
+        descricao: document.getElementById("descricao").value.trim()
+      };
+
+      if (!novoItem.artista || !novoItem.titulo || !novoItem.contato || !novoItem.descricao) {
+        return;
+      }
+
+      cadastros.unshift(novoItem);
+      salvarItens(cadastros);
+      form.reset();
+      renderizarItens();
+    });
+
+    filtroCategoria.addEventListener("change", renderizarItens);
+    campoBusca.addEventListener("input", renderizarItens);
+
+    renderizarItens();
+  </script>
+</body>
+</html>
